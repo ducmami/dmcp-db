@@ -1,0 +1,66 @@
+# DMCP-DB Multi-Database Configuration Example
+# Copy this file to dmcp-db.toml and customize for your environment
+
+# Transport configuration
+transport = "stdio"  # "stdio" or "http"
+port = 8080          # HTTP server port (if transport = "http")
+
+# Database sources
+[[sources]]
+id = "prod_postgres"
+type = "postgres"
+host = "localhost"
+port = 5432
+user = "postgres"
+password = "password"
+database = "production"
+readonly = true
+max_rows = 1000
+
+# Optional SSH tunnel for remote database
+# [sources.ssh]
+# host = "bastion.example.com"
+# port = 22
+# user = "ubuntu"
+# private_key = "~/.ssh/id_rsa"
+
+[[sources]]
+id = "staging_mysql"
+type = "mysql"
+host = "localhost"
+port = 3306
+user = "root"
+password = "secret"
+database = "staging"
+max_rows = 500
+
+[[sources]]
+id = "local_sqlite"
+dsn = "sqlite:///./local.db"
+# Or use individual parameters:
+# type = "sqlite"
+# database = "./local.db"
+
+[[sources]]
+id = "dev_sqlserver"
+type = "sqlserver"
+host = "localhost"
+port = 1433
+user = "sa"
+password = "YourStrong@Passw0rd"
+database = "development"
+
+# Example with initialization script
+[[sources]]
+id = "test_db"
+type = "sqlite"
+database = ":memory:"
+init_script = """
+CREATE TABLE users (
+    id INTEGER PRIMARY KEY,
+    name TEXT NOT NULL,
+    email TEXT UNIQUE
+);
+INSERT INTO users (name, email) VALUES ('Alice', 'alice@example.com');
+"""
+
